@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        /*
         stage('Build') {
             agent{
                 docker{
@@ -20,43 +21,48 @@ pipeline {
                 '''
             }
         }
+*/
 
+        stage('Run Tests'){
+            parallel{
+                stage('Test'){
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
 
-        stage('Test'){
-            agent{
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
+                    steps{
+                        sh'''
+                        echo "Test Stage"
+                        test -f build/index.html
+                        npm test 
+                        '''
+                    }
                 }
-            }
 
-            steps{
-                sh'''
-                echo "Test Stage"
-                test -f build/index.html
-                npm test 
-                '''
+                stage('E2E'){
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+
+                        }
+                    }
+
+                    steps{
+                        sh'''
+                            npm install serve
+                            node_modules/.bin/serve -s build & # & will run this command on the background. now will go to next command
+                            sleep 10
+                            npx playwright test --reporter=html
+                        '''
+                    }
+                }
             }
         }
 
-        stage('E2E'){
-            agent{
-                docker{
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-
-                }
-            }
-
-            steps{
-                sh'''
-                    npm install serve
-                    node_modules/.bin/serve -s build & # & will run this command on the background. now will go to next command
-                    sleep 10
-                    npx playwright test --reporter=html
-                '''
-            }
-        }
     }
     post{
         always {
