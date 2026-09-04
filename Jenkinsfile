@@ -51,7 +51,7 @@ pipeline {
             steps{
                 sh'''
                     npm install serve
-                    node_modules/.bin/serve -s build & // & will run this command on the background. now will go to next command
+                    node_modules/.bin/serve -s build & # & will run this command on the background. now will go to next command
                     sleep 10
                     npx playwright test
                 '''
