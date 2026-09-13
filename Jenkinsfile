@@ -22,7 +22,9 @@ pipeline {
                     // some block
                 sh '''
                     aws --version
-                    aws s3 ls        #we can't access. we don't have access email and password or token
+                    #aws s3 ls        #we can't access. we don't have access email and password or token
+                    echo "Hello S3!" > index.html
+                    aws s3 cp index.html s3://learn-jenkins-20260913505/index.html
 
                 '''
                 }
