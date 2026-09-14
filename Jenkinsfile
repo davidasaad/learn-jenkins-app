@@ -9,6 +9,31 @@ pipeline {
     }
 
     stages {
+
+        stage('Deploy to AWS'){
+            agent{
+                docker{
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args "--entrypoint=''"
+                }
+            }
+            environment{
+                AWS_S3_BUCKET = 'learn-jenkins-20260913505'
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    // some block
+                sh '''
+                    aws --version
+                    #aws s3 ls        #we can't access. we don't have access email and password or token
+                    #aws s3 sync build s3://$AWS_S3_BUCKET
+                    aws ecs register-task-definition --cli-input-json file://learn-jenkins-app/aws/task-definition.json
+
+                '''
+                }
+            }
+        }
         stage('Build') {
             agent {
                 docker {
@@ -27,29 +52,7 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to AWS'){
-            agent{
-                docker{
-                    image 'amazon/aws-cli'
-                    reuseNode true
-                    args "--entrypoint=''"
-                }
-            }
-            environment{
-                AWS_S3_BUCKET = 'learn-jenkins-20260913505'
-            }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    // some block
-                sh '''
-                    aws --version
-                    #aws s3 ls        #we can't access. we don't have access email and password or token
-                    aws s3 sync build s3://$AWS_S3_BUCKET
 
-                '''
-                }
-            }
-        }
 /*
 # section 6. only using the AWS part 
         stage('Tests') {
