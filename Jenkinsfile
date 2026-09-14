@@ -5,6 +5,7 @@ pipeline {
         NETLIFY_SITE_ID = 'e27af724-e609-4aa1-82a7-66b029d432a0'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        AWS_DEFAULT_REGION = 'us-east-2'
         
     }
 
@@ -28,7 +29,7 @@ pipeline {
                     aws --version
                     #aws s3 ls        #we can't access. we don't have access email and password or token
                     #aws s3 sync build s3://$AWS_S3_BUCKET
-                    aws ecs register-task-definition --cli-input-json file://learn-jenkins-app/aws/task-definition.json
+                    aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
 
                 '''
                 }
