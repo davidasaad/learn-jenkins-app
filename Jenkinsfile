@@ -27,7 +27,7 @@ pipeline {
                 '''
             }
         }
-        stage('AWS'){
+        stage('Deploy to AWS'){
             agent{
                 docker{
                     image 'amazon/aws-cli'
@@ -50,7 +50,8 @@ pipeline {
                 }
             }
         }
-
+/*
+# section 6. only using the AWS part 
         stage('Tests') {
             parallel {
                 stage('Unit tests') {
@@ -159,5 +160,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }
