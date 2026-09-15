@@ -29,14 +29,11 @@ pipeline {
             }
         }
 
-        stages {
-
         stage('Build Docker Image'){
             steps{
                 sh 'docker build -t myjenkinsapp .'
             }
         }
-    }
 
 
         stage('Deploy to AWS'){
