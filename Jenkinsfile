@@ -74,6 +74,7 @@ pipeline {
                     #aws s3 ls        #we can't access. we don't have access email and password or token
                     #aws s3 sync build s3://$AWS_S3_BUCKET
                     
+                    sed -i "s/#APP_VERSION#/$REACT_APP_VERSION/g" aws/task-definition-prod.json
                     LATEAST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
                     echo $LATEAST_TD_REVISION
                     aws ecs update-service --cluster learnJekinisApp-Cluster-Prod --service LearnJenkinsApp-TaskDefinition-Prod-service-c2yg3kzl --task-definition LearnJenkinsApp-TaskDefinition-Prod:$LATEAST_TD_REVISION
